@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Inscription</title>
+</head>
+<body>
+  <h1>Créer un compte</h1>
+
+  <form action="/auth/register" method="POST">
+    <label>Nom :</label>
+    <input type="text" name="name" required><br>
+
+    <label>Email :</label>
+    <input type="email" name="email" required><br>
+
+    <label>Mot de passe :</label>
+    <input type="password" name="password" required><br>
+
+    <label>Rôle :</label>
+    <select name="role">
+      <option value="client">Client</option>
+      <option value="admin">Admin</option>
+      <option value="autre">Autre</option>
+    </select><br><br>
+
+    <button type="submit">S'inscrire</button>
+  </form>
+</body>
+</html>
