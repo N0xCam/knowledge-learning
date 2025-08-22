@@ -1,0 +1,10 @@
+<h1>Cursus disponibles</h1>
+<ul>
+  <% cursus.forEach(c => { %>
+    <li>
+      <a href="/client/cursus/<%= c._id %>"><%= c.title %></a> – <%= c.price %> €
+    </li>
+  <% }) %>
+</ul>
+
+<a href="/client/themes">← Retour aux thèmes</a>

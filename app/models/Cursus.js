@@ -1,8 +1,10 @@
-module.exports = [
-  { id: 'guitar', themeId: 'music', name: 'Cursus d’initiation à la guitare', price: 50 },
-  { id: 'piano', themeId: 'music', name: 'Cursus d’initiation au piano', price: 50 },
-  { id: 'devweb', themeId: 'it', name: 'Cursus d’initiation au développement web', price: 60 },
-  { id: 'gardening', themeId: 'gardening', name: 'Cursus d’initiation au jardinage', price: 30 },
-  { id: 'cuisine', themeId: 'cooking', name: 'Cursus d’initiation à la cuisine', price: 44 },
-  { id: 'culinary', themeId: 'cooking', name: 'Cursus d’initiation à l’art du dressage culinaire', price: 48 }
-];
+const mongoose = require('mongoose');
+
+const cursusSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  price: { type: Number, required: true },
+  theme: { type: mongoose.Schema.Types.ObjectId, ref: 'Theme' },
+  lessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }]
+});
+
+module.exports = mongoose.model('Cursus', cursusSchema);

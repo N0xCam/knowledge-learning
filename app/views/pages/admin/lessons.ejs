@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Leçons – Admin</title>
+</head>
+<body>
+  <h1>📚 Leçons du cursus "<%= cursus.title %>"</h1>
+
+  <ul>
+    <% lessons.forEach(lesson => { %>
+      <li>
+        <strong><%= lesson.title %></strong> – <%= lesson.price %> €
+      </li>
+    <% }) %>
+  </ul>
+
+  <p><a href="/admin/themes/<%= cursus.theme %>/cursus">⬅ Retour aux cursus</a></p>
+</body>
+</html>

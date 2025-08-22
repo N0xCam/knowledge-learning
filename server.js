@@ -3,38 +3,48 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
 
+// Initialisation
 dotenv.config();
 const app = express();
+console.log('🚀 Lancement du serveur...');
 
-// Middleware
+// Middlewares
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Configuration des vues EJS
+// EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'app/views'));
 
-console.log('🚀 Lancement du serveur...');
-
-// Import des routes
+// Routes
 const authRoutes = require('./app/routes/authRoutes');
-app.use('/auth', authRoutes);
+const adminRoutes = require('./app/routes/adminRoutes');
+const clientRoutes = require('./app/routes/clientRoutes');
 
-// Route de test directe
+app.use('/auth', authRoutes);
+app.use('/admin', adminRoutes);
+app.use('/client', clientRoutes); 
+
+// Page d’accueil
 app.get('/', (req, res) => {
   console.log('🌍 Route / appelée');
-  res.send('Accueil OK');
+  res.send('Bienvenue sur Knowledge Learning');
 });
 
-// Connexion MongoDB
+// 404
+app.use((req, res) => {
+  res.status(404).send('Page non trouvée');
+});
+
+// Connexion DB + Lancement serveur
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ Connexion MongoDB réussie');
     app.listen(process.env.PORT || 3000, () => {
-      console.log('🟢 Serveur prêt sur http://localhost:3000');
+      console.log(`🟢 Serveur prêt sur http://localhost:${process.env.PORT || 3000}`);
     });
   })
-  .catch((err) => {
-    console.error('❌ Erreur de connexion MongoDB :', err);
+  .catch(err => {
+    console.error('❌ Erreur MongoDB :', err);
   });
