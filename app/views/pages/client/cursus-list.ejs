@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Liste des cursus</title>
+</head>
+<body>
+  <h1>Liste des cursus</h1>
+  <% if (cursusList.length === 0) { %>
+    <p>Aucun cursus disponible.</p>
+  <% } else { %>
+    <ul>
+      <% cursusList.forEach(c => { %>
+        <li>
+          <a href="/client/cursus/<%= c._id %>">
+            <strong><%= c.title %></strong> – <%= c.price %> €
+            (<%= c.theme ? c.theme.title : 'Sans thème' %>)
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</body>
+</html>

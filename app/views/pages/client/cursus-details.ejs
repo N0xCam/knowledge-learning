@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title><%= cursus.title %></title>
+</head>
+<body>
+  <h1><%= cursus.title %></h1>
+  <p>Thème : <%= cursus.theme.title %></p>
+  <p>Prix : <%= cursus.price %> €</p>
+
+  <h2>Leçons incluses :</h2>
+  <% if (lessons.length === 0) { %>
+    <p>Aucune leçon disponible.</p>
+  <% } else { %>
+    <ul>
+      <% lessons.forEach(lesson => { %>
+        <li>
+          <a href="/client/lessons/<%= lesson._id %>">
+            <strong><%= lesson.title %></strong>
+          </a> – <%= lesson.price %> €
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <p><a href="/client/themes/<%= cursus.theme._id %>/cursus">← Retour aux cursus</a></p>
+</body>
+</html>

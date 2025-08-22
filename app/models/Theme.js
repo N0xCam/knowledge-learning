@@ -1,6 +1,8 @@
-module.exports = [
-  { id: 'music', name: 'Musique' },
-  { id: 'it', name: 'Informatique' },
-  { id: 'gardening', name: 'Jardinage' },
-  { id: 'cooking', name: 'Cuisine' }
-];
+const mongoose = require('mongoose');
+
+const themeSchema = new mongoose.Schema({
+  title: { type: String, required: true }, 
+  description: String
+});
+
+module.exports = mongoose.model('Theme', themeSchema);

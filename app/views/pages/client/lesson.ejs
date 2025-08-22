@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title><%= lesson.title %></title>
+</head>
+<body>
+  <h1><%= lesson.title %></h1>
+
+  <section>
+    <h2>Fiche de cours</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed nec dui id tortor eleifend convallis. Curabitur fermentum risus in sapien pulvinar lacinia.</p>
+    <p>Morbi sit amet libero sed mauris feugiat porta. Praesent non orci nec urna sodales congue. Duis sagittis, purus ac sollicitudin suscipit, metus nulla pretium dolor, at fringilla purus velit id leo.</p>
+  </section>
+
+  <% if (lesson.videoUrl) { %>
+    <section>
+      <h2>Vidéo de la leçon</h2>
+      <video width="600" controls>
+        <source src="<%= lesson.videoUrl %>" type="video/mp4">
+        Votre navigateur ne supporte pas la lecture vidéo.
+      </video>
+    </section>
+  <% } %>
+
+  <form action="/client/lessons/<%= lesson._id %>/validate" method="POST">
+    <button type="submit">✅ Valider la leçon</button>
+  </form>
+
+  <p><a href="javascript:history.back()">← Revenir en arrière</a></p>
+</body>
+</html>
