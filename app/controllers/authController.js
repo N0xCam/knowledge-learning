@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const crypto = require('crypto');
 const transporter = require('../config/mailer');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 // ✅ Fonction d'inscription
 const registerUser = async (req, res) => {
@@ -63,7 +65,17 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).send('Utilisateur non trouvé.');
     if (!user.isActive) return res.status(403).send('Compte non activé.');
-    if (user.password !== password) return res.status(401).send('Mot de passe incorrect.');
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).send('Mot de passe incorrect.');
+
+    // 🔐 Enregistrement de l'utilisateur en session
+    req.session.user = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    };
 
     res.send(`Bienvenue ${user.name} ! 🎉`);
   } catch (err) {
@@ -72,5 +84,4 @@ const loginUser = async (req, res) => {
   }
 };
 
-// ✅ Export des fonctions
 module.exports = { registerUser, activateAccount, loginUser };

@@ -3,6 +3,7 @@ const UserCursus = require('../models/UserCursus');
 const Theme = require('../models/Theme');
 const Cursus = require('../models/Cursus');
 const Lesson = require('../models/Lesson');
+const Purchase = require('../models/Purchase');
 
 // 1. Tous les thèmes
 exports.showAllThemes = async (req, res) => {
@@ -16,30 +17,64 @@ exports.showAllThemes = async (req, res) => {
 
 // 2. Cursus par thème
 exports.showCursusByTheme = async (req, res) => {
+  const { themeId } = req.params;
+
   try {
-    const { themeId } = req.params;
     const cursus = await Cursus.find({ theme: themeId }).populate('theme');
     res.render('pages/client/cursus-by-theme', { cursus });
   } catch (err) {
+    console.error('❌ Erreur showCursusByTheme :', err);
     res.status(500).send('Erreur serveur');
   }
 };
 
-// 3. Leçons par cursus
+// 3. Leçons par cursus (détails d’un cursus + achat possible)
 exports.showCursusDetails = async (req, res) => {
   try {
     const cursusId = req.params.cursusId;
+    const userId = req.session.user?._id;
 
     const cursus = await Cursus.findById(cursusId).populate('theme');
     const lessons = await Lesson.find({ cursus: cursusId });
 
-    res.render('pages/client/cursus-details', { cursus, lessons });
+    let hasPurchasedCursus = false;
+    let purchasedLessonIds = [];
+
+    if (userId) {
+      const cursusPurchase = await Purchase.findOne({
+        user: userId,
+        cursus: cursusId,
+        type: 'cursus'
+      });
+
+      hasPurchasedCursus = !!cursusPurchase;
+
+      if (!hasPurchasedCursus) {
+        const lessonPurchases = await Purchase.find({
+          user: userId,
+          lesson: { $in: lessons.map(l => l._id) },
+          type: 'lesson'
+        });
+
+        purchasedLessonIds = lessonPurchases.map(p => p.lesson.toString());
+      }
+    }
+
+    res.render('pages/client/cursus-details', {
+      cursus,
+      lessons,
+      hasPurchasedCursus,
+      purchasedLessonIds
+    });
+
   } catch (err) {
     console.error('❌ Erreur showCursusDetails :', err);
     res.status(500).send('Erreur serveur');
   }
 };
 
+
+// 4. Afficher une leçon
 exports.showLesson = async (req, res) => {
   try {
     const lesson = await Lesson.findById(req.params.lessonId);
@@ -54,11 +89,10 @@ exports.showLesson = async (req, res) => {
   }
 };
 
-
-// 4. Valider une leçon (déjà OK chez toi)
+// 5. Valider une leçon
 exports.validateLesson = async (req, res) => {
   try {
-    const userId = req.session.userId; // ou req.user._id selon ton système d'auth
+    const userId = req.session.userId; // ou req.user._id
     const lessonId = req.params.lessonId;
 
     // Valider la leçon
@@ -100,6 +134,7 @@ exports.validateLesson = async (req, res) => {
   }
 };
 
+// 6. Certifications utilisateur
 exports.showCertifications = async (req, res) => {
   try {
     const userId = req.session.userId; // ou req.user._id

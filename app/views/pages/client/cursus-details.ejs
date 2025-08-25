@@ -1,29 +1,22 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title><%= cursus.title %></title>
-</head>
-<body>
-  <h1><%= cursus.title %></h1>
-  <p>Thème : <%= cursus.theme.title %></p>
-  <p>Prix : <%= cursus.price %> €</p>
+<h1><%= cursus.title %></h1>
+<p>Thème : <%= cursus.theme.title %></p>
+<p>Prix du cursus complet : <%= cursus.price %> €</p>
 
-  <h2>Leçons incluses :</h2>
-  <% if (lessons.length === 0) { %>
-    <p>Aucune leçon disponible.</p>
-  <% } else { %>
-    <ul>
-      <% lessons.forEach(lesson => { %>
-        <li>
-          <a href="/client/lessons/<%= lesson._id %>">
-            <strong><%= lesson.title %></strong>
-          </a> – <%= lesson.price %> €
-        </li>
-      <% }) %>
-    </ul>
-  <% } %>
+<% if (!hasPurchasedCursus) { %>
+  <form action="/purchase/cursus/<%= cursus._id %>" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button type="submit">Acheter le cursus 💳</button>
+  </form>
+<% } else { %>
+  <p>✅ Cursus acheté</p>
+<% } %>
 
-  <p><a href="/client/themes/<%= cursus.theme._id %>/cursus">← Retour aux cursus</a></p>
-</body>
-</html>
+<hr>
+<h2>Leçons :</h2>
+<ul>
+  <% lessons.forEach(lesson => { %>
+    <li><%= lesson.title %> — <%= lesson.price %> €</li>
+  <% }) %>
+</ul>
+
+<a href="/client/themes">← Retour aux thèmes</a>

@@ -7,8 +7,11 @@
 <body>
   <h1>Connexion</h1>
   <form action="/auth/login" method="POST">
+
+
     <input type="email" name="email" placeholder="Email" required><br>
     <input type="password" name="password" placeholder="Mot de passe" required><br>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <button type="submit">Se connecter</button>
   </form>
 </body>
