@@ -1,16 +1,65 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+
   <meta charset="UTF-8">
   <title><%= lesson.title %></title>
+  <style>
+    .flash-message {
+      background-color: #D1FAE5;
+      color: #065F46;
+      border: 1px solid #10B981;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+      animation: fadein 0.5s ease-in-out, fadeout 0.5s ease-in-out 2.5s forwards;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeout {
+      to { opacity: 0; transform: translateY(-10px); }
+    }
+  </style>
 </head>
 <body>
+<!-- ✅ Navbar -->
+  <nav>
+    <ul>
+      <li><a href="/">Accueil</a></li>
+
+      <% if (!session.user) { %>
+        <li><a href="/auth/register">S'inscrire</a></li>
+        <li><a href="/auth/login">Se connecter</a></li>
+      <% } else { %>
+        <li><a href="/client/themes">Thèmes</a></li>
+        <li><a href="/client/certifications">Mes certifications</a></li>
+
+        <% if (session.user.role === 'admin') { %>
+          <li><a href="/admin/dashboard">Dashboard</a></li>
+        <% } %>
+
+        <li>
+          <form method="POST" action="/auth/logout" style="display:inline;">
+            <button>Déconnexion</button>
+          </form>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+  <% if (success_msg) { %>
+    <div class="flash-message"><%= success_msg %></div>
+  <% } %>
+
   <h1><%= lesson.title %></h1>
 
   <section>
     <h2>Fiche de cours</h2>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed nec dui id tortor eleifend convallis. Curabitur fermentum risus in sapien pulvinar lacinia.</p>
-    <p>Morbi sit amet libero sed mauris feugiat porta. Praesent non orci nec urna sodales congue. Duis sagittis, purus ac sollicitudin suscipit, metus nulla pretium dolor, at fringilla purus velit id leo.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
   </section>
 
   <% if (lesson.videoUrl) { %>
@@ -24,9 +73,11 @@
   <% } %>
 
   <form action="/client/lessons/<%= lesson._id %>/validate" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <button type="submit">✅ Valider la leçon</button>
   </form>
 
   <p><a href="javascript:history.back()">← Revenir en arrière</a></p>
+
 </body>
 </html>

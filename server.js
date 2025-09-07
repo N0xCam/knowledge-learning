@@ -4,42 +4,51 @@ const dotenv = require('dotenv');
 const path = require('path');
 const csrf = require('csurf');
 const session = require('express-session');
+const flash = require('connect-flash');
 
 dotenv.config();
 const app = express();
 console.log('🚀 Lancement du serveur...');
 
-// Session (⚠️ Obligatoire AVANT le CSRF)
+// ✅ Session (⚠️ Toujours AVANT le CSRF)
 app.use(session({
   secret: 'knowledge-learning-secret-key',
   resave: false,
   saveUninitialized: false
 }));
 
-// Middlewares
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
-
-// EJS
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'app/views'));
-
-// CSRF
-const csrfProtection = csrf();
-app.use(csrfProtection);
-
-// Passer le token aux vues
+// ✅ Flash messages
+app.use(flash());
 app.use((req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
-  res.locals.user = req.session.user || null; // utile dans les vues
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
   next();
 });
 
-// 🔐 Middlewares d'auth
+// ✅ Body parsing & fichiers statiques
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'app/public'))); // ✅ CSS/JS/IMG ici
+
+// ✅ View engine EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'app/views'));
+
+// ✅ Protection CSRF
+const csrfProtection = csrf();
+app.use(csrfProtection);
+
+// ✅ Variables accessibles dans toutes les vues
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.session = req.session;
+  next();
+});
+
+// ✅ Middlewares d’auth
 const { isAuthenticated, isAdmin } = require('./app/middlewares/authMiddleware');
 
-// Routes
+// ✅ Routes
 const authRoutes = require('./app/routes/authRoutes');
 const adminRoutes = require('./app/routes/adminRoutes');
 const clientRoutes = require('./app/routes/clientRoutes');
@@ -50,18 +59,17 @@ app.use('/admin', isAuthenticated, isAdmin, adminRoutes);
 app.use('/client', isAuthenticated, clientRoutes);
 app.use('/purchase', isAuthenticated, purchaseRoutes);
 
-// Page d’accueil
+// ✅ Page d’accueil
 app.get('/', (req, res) => {
-  console.log('🌍 Route / appelée');
-  res.send('Bienvenue sur Knowledge Learning');
+  res.render('pages/home', { title: 'Accueil' });
 });
 
-// 404
+// ❌ 404
 app.use((req, res) => {
   res.status(404).send('Page non trouvée');
 });
 
-// Connexion DB + Lancement serveur
+// ✅ Connexion MongoDB + lancement serveur
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ Connexion MongoDB réussie');

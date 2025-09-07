@@ -1,0 +1,27 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/" class="nav-logo">Knowledge Learning</a>
+
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    <label for="menu-toggle" class="menu-icon">&#9776;</label>
+
+    <ul class="nav-links">
+      <% if (!session.user) { %>
+        <li><a href="/auth/register">S’inscrire</a></li>
+        <li><a href="/auth/login">Se connecter</a></li>
+      <% } else { %>
+        <li><a href="/themes">Thèmes</a></li>
+        <li><a href="/client/certifications">Certifications</a></li>
+        <% if (session.user.role === 'admin') { %>
+          <li><a href="/admin/dashboard">Dashboard Admin</a></li>
+        <% } %>
+        <li>
+          <form action="/auth/logout" method="POST" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="logout-btn">Déconnexion</button>
+          </form>
+        </li>
+      <% } %>
+    </ul>
+  </div>
+</nav>

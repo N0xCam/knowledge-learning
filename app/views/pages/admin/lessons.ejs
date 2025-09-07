@@ -5,6 +5,12 @@
   <title>Leçons – Admin</title>
 </head>
 <body>
+  <% if (successMessage) { %>
+  <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px;">
+    <%= successMessage %>
+  </div>
+<% } %>
+
   <h1>📚 Leçons du cursus "<%= cursus.title %>"</h1>
 
   <ul>

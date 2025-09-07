@@ -15,20 +15,21 @@ exports.showAllThemes = async (req, res) => {
   }
 };
 
-// 2. Cursus par thème
+// 2. Tous les cursus d’un thème
 exports.showCursusByTheme = async (req, res) => {
-  const { themeId } = req.params;
-
   try {
-    const cursus = await Cursus.find({ theme: themeId }).populate('theme');
-    res.render('pages/client/cursus-by-theme', { cursus });
+    const themeId = req.params.themeId;
+    const theme = await Theme.findById(themeId);
+    const cursusList = await Cursus.find({ theme: themeId });
+
+    res.render('pages/client/cursus-list', { theme, cursusList });
   } catch (err) {
     console.error('❌ Erreur showCursusByTheme :', err);
     res.status(500).send('Erreur serveur');
   }
 };
 
-// 3. Leçons par cursus (détails d’un cursus + achat possible)
+// 3. Détails d’un cursus (avec gestion achat + accès leçons)
 exports.showCursusDetails = async (req, res) => {
   try {
     const cursusId = req.params.cursusId;
@@ -38,9 +39,11 @@ exports.showCursusDetails = async (req, res) => {
     const lessons = await Lesson.find({ cursus: cursusId });
 
     let hasPurchasedCursus = false;
-    let purchasedLessonIds = [];
+    let lessonAccess = {};
+    let validatedLessonIds = [];
 
     if (userId) {
+      // Vérifie si le cursus complet a été acheté
       const cursusPurchase = await Purchase.findOne({
         user: userId,
         cursus: cursusId,
@@ -49,32 +52,38 @@ exports.showCursusDetails = async (req, res) => {
 
       hasPurchasedCursus = !!cursusPurchase;
 
-      if (!hasPurchasedCursus) {
-        const lessonPurchases = await Purchase.find({
+      // Vérifie les achats individuels pour chaque leçon
+      for (const lesson of lessons) {
+        const hasLessonPurchase = await Purchase.findOne({
           user: userId,
-          lesson: { $in: lessons.map(l => l._id) },
+          lesson: lesson._id,
           type: 'lesson'
         });
 
-        purchasedLessonIds = lessonPurchases.map(p => p.lesson.toString());
+        lessonAccess[lesson._id] = hasPurchasedCursus || !!hasLessonPurchase;
       }
+
+      // Vérifie les leçons validées
+      const userProgress = await UserProgress.find({ user: userId });
+      validatedLessonIds = userProgress
+        .filter(p => p.validated)
+        .map(p => p.lesson.toString());
     }
 
     res.render('pages/client/cursus-details', {
       cursus,
       lessons,
       hasPurchasedCursus,
-      purchasedLessonIds
+      lessonAccess,
+      validatedLessonIds
     });
-
   } catch (err) {
     console.error('❌ Erreur showCursusDetails :', err);
     res.status(500).send('Erreur serveur');
   }
 };
 
-
-// 4. Afficher une leçon
+// 4. Affichage d’une leçon
 exports.showLesson = async (req, res) => {
   try {
     const lesson = await Lesson.findById(req.params.lessonId);
@@ -92,34 +101,34 @@ exports.showLesson = async (req, res) => {
 // 5. Valider une leçon
 exports.validateLesson = async (req, res) => {
   try {
-    const userId = req.session.userId; // ou req.user._id
+    const userId = req.session.user?._id;
     const lessonId = req.params.lessonId;
 
-    // Valider la leçon
+    // Marquer la leçon comme validée pour l'utilisateur
     await UserProgress.findOneAndUpdate(
       { user: userId, lesson: lessonId },
       { validated: true },
       { upsert: true }
     );
 
-    // Trouver la leçon pour retrouver son cursus
+    // Récupérer le cursus de la leçon
     const lesson = await Lesson.findById(lessonId);
     const cursusId = lesson.cursus;
 
     // Récupérer toutes les leçons du cursus
     const allLessons = await Lesson.find({ cursus: cursusId });
 
-    // Vérifier si toutes les leçons sont validées pour l'utilisateur
-    const progress = await UserProgress.find({
+    // Vérifier combien sont validées
+    const validatedLessons = await UserProgress.find({
       user: userId,
       lesson: { $in: allLessons.map(l => l._id) },
       validated: true
     });
 
-    const allValidated = progress.length === allLessons.length;
+    const allValidated = validatedLessons.length === allLessons.length;
 
+    // Si toutes les leçons sont validées, on valide le cursus
     if (allValidated) {
-      // Marquer le cursus comme validé
       await UserCursus.findOneAndUpdate(
         { user: userId, cursus: cursusId },
         { validated: true },
@@ -127,17 +136,22 @@ exports.validateLesson = async (req, res) => {
       );
     }
 
-    res.redirect('back');
+    // Message flash et redirection vers la leçon
+    req.flash('success_msg', 'Leçon validée avec succès !');
+    res.redirect(`/client/lessons/${lessonId}`);
+
   } catch (error) {
-    console.error('❌ Erreur lors de la validation :', error);
-    res.status(500).send('Erreur lors de la validation');
+    console.error('❌ Erreur validation leçon :', error);
+    req.flash('error_msg', 'Erreur lors de la validation de la leçon.');
+    res.redirect(req.get('Referrer') || '/client/themes');
   }
 };
 
-// 6. Certifications utilisateur
+
+// 6. Voir les certifications
 exports.showCertifications = async (req, res) => {
   try {
-    const userId = req.session.userId; // ou req.user._id
+    const userId = req.session.user?._id;
     const certifications = await UserCursus
       .find({ user: userId, validated: true })
       .populate('cursus');

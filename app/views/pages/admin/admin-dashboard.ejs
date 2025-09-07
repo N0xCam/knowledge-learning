@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <!-- ✅ Navbar -->
+  <nav>
+    <ul>
+      <li><a href="/">Accueil</a></li>
+
+      <% if (!session.user) { %>
+        <li><a href="/auth/register">S'inscrire</a></li>
+        <li><a href="/auth/login">Se connecter</a></li>
+      <% } else { %>
+        <li><a href="/client/themes">Thèmes</a></li>
+        <li><a href="/client/certifications">Mes certifications</a></li>
+
+        <% if (session.user.role === 'admin') { %>
+          <li><a href="/admin/dashboard">Dashboard</a></li>
+        <% } %>
+
+        <li>
+          <form method="POST" action="/auth/logout" style="display:inline;">
+            <button>Déconnexion</button>
+          </form>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+  
+  <h1>Tableau de bord administrateur</h1>
+
+  <!-- 🔹 THÈMES -->
+  <section>
+    <h2>Thèmes</h2>
+    <form class="ajax-form" data-type="theme" action="/admin/themes/create" method="POST">
+      <input type="text" name="title" placeholder="Titre du thème" required>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit">Ajouter</button>
+    </form>
+
+    <table id="themes-table">
+      <thead><tr><th>Titre</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% themes.forEach(theme => { %>
+          <tr id="theme-<%= theme._id %>">
+            <td><input type="text" value="<%= theme.title %>" id="input-theme-<%= theme._id %>"></td>
+            <td>
+              <button onclick="modifierTheme('<%= theme._id %>')">✏️</button>
+              <form action="/admin/themes/<%= theme._id %>/delete" method="POST" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button>🗑</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 🔹 CURSUS -->
+  <section>
+    <h2>Cursus</h2>
+    <form class="ajax-form" data-type="cursus" action="/admin/cursus/create" method="POST">
+      <input type="text" name="title" placeholder="Titre du cursus" required>
+      <input type="number" name="price" placeholder="Prix" required>
+      <select name="theme" required>
+        <% themes.forEach(theme => { %>
+          <option value="<%= theme._id %>"><%= theme.title %></option>
+        <% }) %>
+      </select>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit">Ajouter</button>
+    </form>
+
+    <table id="cursus-table">
+      <thead><tr><th>Titre</th><th>Prix</th><th>Thème</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% cursus.forEach(c => { %>
+          <tr id="cursus-<%= c._id %>">
+            <td><input type="text" value="<%= c.title %>" id="input-cursus-title-<%= c._id %>"></td>
+            <td><input type="number" value="<%= c.price %>" id="input-cursus-price-<%= c._id %>"></td>
+            <td><%= c.theme?.title || '⛔' %></td>
+            <td>
+              <button onclick="modifierCursus('<%= c._id %>')">✏️</button>
+              <form action="/admin/cursus/<%= c._id %>/delete" method="POST" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button>🗑</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 🔹 LEÇONS -->
+  <section>
+    <h2>Leçons</h2>
+    <form class="ajax-form" data-type="lesson" action="/admin/lessons/create" method="POST">
+      <input type="text" name="title" placeholder="Titre de la leçon" required>
+      <input type="number" name="price" placeholder="Prix" required>
+      <select name="cursus" required>
+        <% cursus.forEach(c => { %>
+          <option value="<%= c._id %>"><%= c.title %></option>
+        <% }) %>
+      </select>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit">Ajouter</button>
+    </form>
+
+    <table id="lessons-table">
+      <thead><tr><th>Titre</th><th>Prix</th><th>Cursus</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% lessons.forEach(l => { %>
+          <tr id="lesson-<%= l._id %>">
+            <td><input type="text" value="<%= l.title %>" id="input-lesson-title-<%= l._id %>"></td>
+            <td><input type="number" value="<%= l.price %>" id="input-lesson-price-<%= l._id %>"></td>
+            <td><%= l.cursus?.title || '⛔' %></td>
+            <td>
+              <button onclick="modifierLesson('<%= l._id %>')">✏️</button>
+              <form action="/admin/lessons/<%= l._id %>/delete" method="POST" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button>🗑</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ✅ SCRIPT INLINE -->
+  <script>
+    const csrf = '<%= csrfToken %>';
+
+    document.querySelectorAll('.ajax-form').forEach(form => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const type = form.dataset.type;
+
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'CSRF-Token': csrf },
+          body: formData
+        });
+
+        const data = await res.json();
+        if (!res.ok) return alert(data.message || 'Erreur');
+        location.reload();
+      });
+    });
+
+    async function modifierTheme(id) {
+      const title = document.getElementById(`input-theme-${id}`).value;
+      const res = await fetch(`/admin/themes/${id}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrf },
+        body: JSON.stringify({ title })
+      });
+      if (!res.ok) alert('Erreur lors de la modification du thème');
+    }
+
+    async function modifierCursus(id) {
+      const title = document.getElementById(`input-cursus-title-${id}`).value;
+      const price = document.getElementById(`input-cursus-price-${id}`).value;
+      const res = await fetch(`/admin/cursus/${id}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrf },
+        body: JSON.stringify({ title, price })
+      });
+      if (!res.ok) alert('Erreur lors de la modification du cursus');
+    }
+
+    async function modifierLesson(id) {
+      const title = document.getElementById(`input-lesson-title-${id}`).value;
+      const price = document.getElementById(`input-lesson-price-${id}`).value;
+      const res = await fetch(`/admin/lessons/${id}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrf },
+        body: JSON.stringify({ title, price })
+      });
+      if (!res.ok) alert('Erreur lors de la modification de la leçon');
+    }
+  </script>
+</body>
+</html>

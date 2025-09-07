@@ -3,30 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <title>Inscription</title>
+  <link rel="stylesheet" href="/css/style.css">
+
 </head>
 <body>
-  <h1>Créer un compte</h1>
+  <!-- ✅ Navbar -->
+  <nav>
+    <ul>
+      <li><a href="/">Accueil</a></li>
 
-  <form action="/auth/register" method="POST">
-    
+      <% if (!session.user) { %>
+        <li><a href="/auth/register">S'inscrire</a></li>
+        <li><a href="/auth/login">Se connecter</a></li>
+      <% } else { %>
+        <li><a href="/client/themes">Thèmes</a></li>
+        <li><a href="/client/certifications">Mes certifications</a></li>
 
-    <label>Nom :</label>
-    <input type="text" name="name" required><br>
+        <% if (session.user.role === 'admin') { %>
+          <li><a href="/admin/dashboard">Dashboard</a></li>
+        <% } %>
 
-    <label>Email :</label>
-    <input type="email" name="email" required><br>
+        <li>
+          <form method="POST" action="/auth/logout" style="display:inline;">
+            <button>Déconnexion</button>
+          </form>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+  <main class="form-container">
+    <h2>Créer un compte</h2>
+    <form action="/auth/register" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <label for="name">Nom</label>
+      <input type="text" name="name" id="name" required>
 
-    <label>Mot de passe :</label>
-    <input type="password" name="password" required><br>
+      <label for="email">Email</label>
+      <input type="email" name="email" id="email" required>
 
-    <label>Rôle :</label>
-    <select name="role">
-      <option value="client">Client</option>
-      <option value="admin">Admin</option>
-      <option value="autre">Autre</option>
-    </select><br><br>
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <button type="submit">S'inscrire</button>
-  </form>
+      <label for="password">Mot de passe</label>
+      <input type="password" name="password" id="password" required>
+
+      <label for="role">Rôle</label>
+      <select name="role" id="role">
+        <option value="client">Client</option>
+        <option value="admin">Admin</option>
+      </select>
+
+      <button type="submit" class="btn">Créer le compte</button>
+    </form>
+  </main>
+
 </body>
 </html>

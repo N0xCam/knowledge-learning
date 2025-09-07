@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #f1f8fc;
+  color: #384050;
+}
+
+a {
+  color: #0074c7;
+  text-decoration: none;
+}
+a:hover {
+  color: #00497c;
+}
+
+header {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+nav li {
+  display: inline;
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 2rem;
+}
+
+.hero {
+  background-color: #0074c7;
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #00497c;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: #0074c7;
+}
+
+.card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+  background-color: #f1f8fc;
+  border-top: 1px solid #ddd;
+}
+
+/* 🎨 Style pour les pages Register et Login */
+.form-container {
+  max-width: 500px;
+  margin: 40px auto;
+  background: #f1f8fc;
+  padding: 2rem 2.5rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 74, 124, 0.15);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #00497c;
+}
+
+.form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-container label {
+  font-weight: 600;
+  color: #384050;
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"] {
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.form-container button {
+  padding: 0.8rem;
+  border: none;
+  background-color: #0074c7;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.form-container button:hover {
+  background-color: #00497c;
+}
+
+.form-container .link {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.form-container .link a {
+  color: #0074c7;
+  text-decoration: none;
+}
+
+.form-container .link a:hover {
+  text-decoration: underline;
+}
+
+
+/* ✅ Base */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+form.auth-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+form.auth-form h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  color: #333;
+  text-align: center;
+}
+
+.auth-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #444;
+  font-weight: 500;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.auth-form button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #007acc;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.auth-form button:hover {
+  background-color: #005fa3;
+}
+
+.auth-form .links {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.auth-form .links a {
+  color: #007acc;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.auth-form .links a:hover {
+  text-decoration: underline;
+}

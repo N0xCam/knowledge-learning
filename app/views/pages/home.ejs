@@ -2,11 +2,63 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Knowledge Learning</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Accueil - Knowledge Learning</title>
+  <link rel="stylesheet" href="/css/styles.css">
+
+
+
 </head>
 <body>
-  <h1>Bienvenue sur Knowledge Learning</h1>
-  <p>La plateforme e-learning des passionnés !</p>
+
+  <!-- ✅ Navbar -->
+  <nav>
+    <ul>
+      <li><a href="/">Accueil</a></li>
+
+      <% if (!session.user) { %>
+        <li><a href="/auth/register">S'inscrire</a></li>
+        <li><a href="/auth/login">Se connecter</a></li>
+      <% } else { %>
+        <li><a href="/client/themes">Thèmes</a></li>
+        <li><a href="/client/certifications">Mes certifications</a></li>
+
+        <% if (session.user.role === 'admin') { %>
+          <li><a href="/admin/dashboard">Dashboard</a></li>
+        <% } %>
+
+        <li>
+          <form method="POST" action="/auth/logout" style="display:inline;">
+            <button>Déconnexion</button>
+          </form>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+
+  <!-- ✅ Contenu principal -->
+  <main>
+     <main>
+    <section class="hero">
+      <h1>Bienvenue sur Knowledge Learning !</h1>
+      <p>La plateforme d'apprentissage moderne et intuitive.</p>
+      <a href="/auth/register" class="btn">Commencer</a>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Cours accessibles</h2>
+        <p>Explorez des centaines de leçons réparties par thématiques et cursus.</p>
+      </div>
+      <div class="card">
+        <h2>Suivi personnalisé</h2>
+        <p>Validez votre apprentissage à votre rythme et obtenez des certifications.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Knowledge Learning - Tous droits réservés
+  </footer>
+
 </body>
 </html>

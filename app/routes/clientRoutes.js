@@ -8,6 +8,8 @@ const {
   showLesson,
   showCertifications 
 } = require('../controllers/clientController');
+const { isAuthenticated } = require('../middlewares/authMiddleware');
+
 
 console.log('📦 clientRoutes.js chargé');
 
@@ -21,6 +23,7 @@ router.get('/themes/:themeId/cursus', showCursusByTheme); // 🟢 Liste des curs
 router.get('/cursus/:cursusId', showCursusDetails); // 🟢 Détails du cursus (avec leçons)
 router.get('/lessons/:lessonId', showLesson);
 router.post('/lessons/:lessonId/validate', validateLesson); // 🟢 Validation d'une leçon
-router.get('/certifications', showCertifications);
+router.get('/certifications', isAuthenticated, showCertifications);
+
 
 module.exports = router;

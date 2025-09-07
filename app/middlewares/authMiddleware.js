@@ -1,13 +1,15 @@
-exports.isAuthenticated = (req, res, next) => {
-  if (req.session.user) {
+function isAuthenticated(req, res, next) {
+  if (req.session && req.session.user) {
     return next();
   }
-  return res.redirect('/auth/login');
-};
+  res.redirect('/auth/login');
+}
 
-exports.isAdmin = (req, res, next) => {
+function isAdmin(req, res, next) {
   if (req.session.user && req.session.user.role === 'admin') {
     return next();
   }
-  return res.redirect('/client/themes'); // ou page "accès refusé"
-};
+  res.redirect('/');
+}
+
+module.exports = { isAuthenticated, isAdmin };

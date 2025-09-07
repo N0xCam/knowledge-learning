@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Liste des leçons</title>
+</head>
+<body>
+  <!-- ✅ Navbar -->
+  <nav>
+    <ul>
+      <li><a href="/">Accueil</a></li>
+
+      <% if (!session.user) { %>
+        <li><a href="/auth/register">S'inscrire</a></li>
+        <li><a href="/auth/login">Se connecter</a></li>
+      <% } else { %>
+        <li><a href="/client/themes">Thèmes</a></li>
+        <li><a href="/client/certifications">Mes certifications</a></li>
+
+        <% if (session.user.role === 'admin') { %>
+          <li><a href="/admin/dashboard">Dashboard</a></li>
+        <% } %>
+
+        <li>
+          <form method="POST" action="/auth/logout" style="display:inline;">
+            <button>Déconnexion</button>
+          </form>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+  <h1>Leçons du cursus : <%= cursus.title %></h1>
+
+  <% if (success_msg) { %>
+    <p style="color: green;"><%= success_msg %></p>
+  <% } %>
+
+  <% if (error_msg) { %>
+    <p style="color: red;"><%= error_msg %></p>
+  <% } %>
+
+  <ul>
+    <% lessons.forEach(lesson => { %>
+      <li>
+        <strong><%= lesson.title %></strong> — <%= lesson.price %> €
+        
+        <% if (lessonAccess && lessonAccess[lesson._id]) { %>
+          <a href="/client/lessons/<%= lesson._id %>">📖 Accéder à la leçon</a>
+        <% } else { %>
+          <form action="/purchase/lessons/<%= lesson._id %>" method="POST" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit">💳 Acheter la leçon</button>
+          </form>
+        <% } %>
+      </li>
+    <% }) %>
+  </ul>
+
+  <p><a href="javascript:history.back()">← Retour</a></p>
+</body>
+</html>

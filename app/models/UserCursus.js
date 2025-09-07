@@ -1,4 +1,3 @@
-// app/models/UserCursus.js
 const mongoose = require('mongoose');
 
 const userCursusSchema = new mongoose.Schema({
