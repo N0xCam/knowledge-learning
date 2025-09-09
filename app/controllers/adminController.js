@@ -27,6 +27,58 @@ exports.adminDashboard = async (req, res) => {
   }
 };
 
+// 🔹 Voir les utilisateurs
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().lean();
+    res.status(200).json({ success: true, users });
+  } catch (err) {
+    console.error('❌ Erreur getAllUsers :', err);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+};
+
+// 🔹 CRÉER UN UTILISATEUR
+exports.createUser = async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+    await User.create({ name, email, password, role });
+    res.redirect('/admin/dashboard');
+  } catch (err) {
+    console.error('❌ Erreur createUser :', err);
+    req.flash('error_msg', 'Erreur lors de la création de l’utilisateur.');
+    res.redirect('/admin/dashboard');
+  }
+};
+
+
+// 🔹 Modifier un utilisateur
+exports.updateUser = async (req, res) => {
+  try {
+    const { name, email, role, isActive } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.userId,
+      { name, email, role, isActive },
+      { new: true }
+    );
+    res.status(200).json({ success: true, user });
+  } catch (err) {
+    console.error('❌ Erreur updateUser :', err);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+};
+
+// 🔹 Supprimer un utilisateur
+exports.deleteUser = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.userId);
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.error('❌ Erreur deleteUser :', err);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+};
+
 // 🔹 THEMES
 exports.createTheme = async (req, res) => {
   try {

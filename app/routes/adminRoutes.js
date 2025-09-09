@@ -10,6 +10,10 @@ router.use(csrfProtection);
 router.use(isAdmin);
 
 router.get('/dashboard', adminController.adminDashboard);
+router.get('/users', adminController.getAllUsers);
+router.post('/users/create', adminController.createUser);
+router.post('/users/:userId/update', adminController.updateUser);
+router.post('/users/:userId/delete', adminController.deleteUser);
 router.post('/themes/create', adminController.createTheme);
 router.post('/themes/:themeId/update', adminController.updateTheme);
 router.post('/themes/:themeId/delete', adminController.deleteTheme);

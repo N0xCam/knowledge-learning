@@ -33,6 +33,66 @@
   
   <h1>Tableau de bord administrateur</h1>
 
+<!-- 🔹 UTILISATEURS -->
+<section>
+  <h2>Utilisateurs</h2>
+
+  <form action="/admin/users/create" method="POST">
+    <input type="text" name="name" placeholder="Nom" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Mot de passe" required>
+    <select name="role" required>
+      <option value="client">Client</option>
+      <option value="admin">Admin</option>
+      <option value="autre">Autre</option>
+    </select>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <table id="users-table">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Email</th>
+        <th>Rôle</th>
+        <th>Actif</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.forEach(user => { %>
+        <tr id="user-<%= user._id %>">
+          <form action="/admin/users/<%= user._id %>/update" method="POST">
+            <td><input type="text" name="name" value="<%= user.name %>" required></td>
+            <td><input type="email" name="email" value="<%= user.email %>" required></td>
+            <td>
+              <select name="role">
+                <option value="client" <%= user.role === 'client' ? 'selected' : '' %>>Client</option>
+                <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                <option value="autre" <%= user.role === 'autre' ? 'selected' : '' %>>Autre</option>
+              </select>
+            </td>
+            <td>
+              <input type="checkbox" name="isActive" value="true" <%= user.isActive ? 'checked' : '' %>>
+            </td>
+            <td>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit">✏️</button>
+          </form>
+              <form action="/admin/users/<%= user._id %>/delete" method="POST" style="display:inline;">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit">🗑</button>
+              </form>
+            </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</section>
+
+
+
   <!-- 🔹 THÈMES -->
   <section>
     <h2>Thèmes</h2>
