@@ -36,35 +36,43 @@
   <!-- 🔹 THÈMES -->
   <section>
     <h2>Thèmes</h2>
-    <form class="ajax-form" data-type="theme" action="/admin/themes/create" method="POST">
-      <input type="text" name="title" placeholder="Titre du thème" required>
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <button type="submit">Ajouter</button>
-    </form>
+    <form action="/admin/themes/create" method="POST">
+  <input type="text" name="title" required> 
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <button type="submit">Ajouter</button>
+</form>
 
-    <table id="themes-table">
-      <thead><tr><th>Titre</th><th>Actions</th></tr></thead>
-      <tbody>
-        <% themes.forEach(theme => { %>
-          <tr id="theme-<%= theme._id %>">
-            <td><input type="text" value="<%= theme.title %>" id="input-theme-<%= theme._id %>"></td>
-            <td>
-              <button onclick="modifierTheme('<%= theme._id %>')">✏️</button>
-              <form action="/admin/themes/<%= theme._id %>/delete" method="POST" style="display:inline">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <button>🗑</button>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </section>
+
+<table id="themes-table">
+  <thead>
+    <tr><th>Titre</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    <% themes.forEach(theme => { %>
+      <tr id="theme-<%= theme._id %>">
+        <td>
+          <input type="text" value="<%= theme.title %>" id="input-theme-<%= theme._id %>">
+        </td>
+        <td>
+          <!-- Bouton modifier -->
+          <button type="button" onclick="modifierTheme('<%= theme._id %>')">✏️</button>
+
+          <!-- Formulaire de suppression -->
+          <form action="/admin/themes/<%= theme._id %>/delete" method="POST" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit">🗑</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
 
   <!-- 🔹 CURSUS -->
   <section>
     <h2>Cursus</h2>
-    <form class="ajax-form" data-type="cursus" action="/admin/cursus/create" method="POST">
+    <form action="/admin/cursus/create" method="POST">
       <input type="text" name="title" placeholder="Titre du cursus" required>
       <input type="number" name="price" placeholder="Prix" required>
       <select name="theme" required>
@@ -85,12 +93,16 @@
             <td><input type="number" value="<%= c.price %>" id="input-cursus-price-<%= c._id %>"></td>
             <td><%= c.theme?.title || '⛔' %></td>
             <td>
-              <button onclick="modifierCursus('<%= c._id %>')">✏️</button>
-              <form action="/admin/cursus/<%= c._id %>/delete" method="POST" style="display:inline">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <button>🗑</button>
-              </form>
-            </td>
+  <!-- Bouton modifier -->
+  <button type="button" onclick="modifierCursus('<%= c._id %>')">✏️</button>
+
+  <!-- Formulaire de suppression -->
+  <form action="/admin/cursus/<%= c._id %>/delete" method="POST" style="display:inline;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button type="submit">🗑</button>
+  </form>
+</td>
+
           </tr>
         <% }) %>
       </tbody>
@@ -100,7 +112,7 @@
   <!-- 🔹 LEÇONS -->
   <section>
     <h2>Leçons</h2>
-    <form class="ajax-form" data-type="lesson" action="/admin/lessons/create" method="POST">
+    <form action="/admin/lessons/create" method="POST">
       <input type="text" name="title" placeholder="Titre de la leçon" required>
       <input type="number" name="price" placeholder="Prix" required>
       <select name="cursus" required>
@@ -120,13 +132,17 @@
             <td><input type="text" value="<%= l.title %>" id="input-lesson-title-<%= l._id %>"></td>
             <td><input type="number" value="<%= l.price %>" id="input-lesson-price-<%= l._id %>"></td>
             <td><%= l.cursus?.title || '⛔' %></td>
-            <td>
-              <button onclick="modifierLesson('<%= l._id %>')">✏️</button>
-              <form action="/admin/lessons/<%= l._id %>/delete" method="POST" style="display:inline">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <button>🗑</button>
-              </form>
-            </td>
+           <td>
+  <!-- Bouton modifier -->
+  <button type="button" onclick="modifierLesson('<%= l._id %>')">✏️</button>
+
+  <!-- Formulaire de suppression -->
+  <form action="/admin/lessons/<%= l._id %>/delete" method="POST" style="display:inline;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button type="submit">🗑</button>
+  </form>
+</td>
+
           </tr>
         <% }) %>
       </tbody>

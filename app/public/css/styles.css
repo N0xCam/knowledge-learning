@@ -24,17 +24,63 @@ header {
   align-items: center;
 }
 
-nav ul {
+/* Navbar*/
+nav.navbar {
+  background-color: #ffffff;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.nav-logo {
+  font-weight: bold;
+  font-size: 1.25rem;
+  text-decoration: none;
+  color: #1d4ed8;
+}
+
+.nav-links {
   list-style: none;
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   margin: 0;
   padding: 0;
 }
 
-nav li {
-  display: inline;
+.nav-links li {
+  display: inline-block;
 }
+
+.nav-links li a,
+.logout-btn {
+  text-decoration: none;
+  color: #1d4ed8;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-links li a:hover,
+.logout-btn:hover {
+  text-decoration: underline;
+}
+
+.logout-btn {
+  font-family: inherit;
+}
+
+/* Hero */
 
 main {
   max-width: 1100px;

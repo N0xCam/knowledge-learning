@@ -30,13 +30,14 @@ exports.adminDashboard = async (req, res) => {
 // 🔹 THEMES
 exports.createTheme = async (req, res) => {
   try {
-    const theme = await Theme.create({ title: req.body.title });
-    res.status(201).json({ success: true, theme });
+    await Theme.create({ title: req.body.title });
+    res.redirect('/admin/dashboard'); 
   } catch (err) {
     console.error('❌ Erreur createTheme :', err);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
+    res.status(500).send('Erreur serveur');
   }
 };
+
 
 exports.updateTheme = async (req, res) => {
   try {
@@ -66,14 +67,16 @@ exports.deleteTheme = async (req, res) => {
 exports.createCursus = async (req, res) => {
   try {
     const { title, price, theme } = req.body;
-    const cursus = await Cursus.create({ title, price, theme });
-    const populated = await cursus.populate('theme');
-    res.status(201).json({ success: true, cursus: populated });
+
+    await Cursus.create({ title, price, theme });
+
+    res.redirect('/admin/dashboard');
   } catch (err) {
     console.error('❌ Erreur createCursus :', err);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
+    res.status(500).send('Erreur serveur');
   }
 };
+
 
 exports.updateCursus = async (req, res) => {
   try {
@@ -100,18 +103,21 @@ exports.deleteCursus = async (req, res) => {
   }
 };
 
+
 // 🔹 LEÇONS
 exports.createLesson = async (req, res) => {
   try {
     const { title, price, cursus } = req.body;
-    const lesson = await Lesson.create({ title, price, cursus });
-    const populated = await lesson.populate('cursus');
-    res.status(201).json({ success: true, lesson: populated });
+
+    await Lesson.create({ title, price, cursus });
+
+    res.redirect('/admin/dashboard');
   } catch (err) {
     console.error('❌ Erreur createLesson :', err);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
+    res.status(500).send('Erreur serveur');
   }
 };
+
 
 exports.updateLesson = async (req, res) => {
   try {
@@ -137,3 +143,4 @@ exports.deleteLesson = async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 };
+
