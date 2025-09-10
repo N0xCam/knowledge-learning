@@ -13,7 +13,6 @@ const { isAuthenticated } = require('../middlewares/authMiddleware');
 router.get('/test', (req, res) => {
 });
 
-// Routes client
 router.get('/themes', showAllThemes);
 router.get('/themes/:themeId/cursus', showCursusByTheme); 
 router.get('/cursus/:cursusId', showCursusDetails); 
