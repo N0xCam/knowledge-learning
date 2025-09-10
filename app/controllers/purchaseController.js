@@ -5,7 +5,7 @@ const Cursus = require('../models/Cursus');
 const Lesson = require('../models/Lesson');
 const Purchase = require('../models/Purchase');
 
-// Achat d'une leçon via Stripe
+// uy a lesson with Stripe
 exports.purchaseLesson = async (req, res) => {
   const userId = req.session.user?._id;
   const { lessonId } = req.params;
@@ -38,7 +38,7 @@ exports.purchaseLesson = async (req, res) => {
   }
 };
 
-// Confirmer achat leçon
+// confirmation of the buying lesson 
 exports.confirmLessonPurchase = async (req, res) => {
   const userId = req.session.user?._id;
   const { lessonId } = req.params;
@@ -58,7 +58,7 @@ exports.confirmLessonPurchase = async (req, res) => {
   }
 };
 
-// Achat cursus complet
+// Purchase the entire cursus
 exports.purchaseCursus = async (req, res) => {
   const userId = req.session.user?._id;
   const { cursusId } = req.params;
@@ -91,7 +91,7 @@ exports.purchaseCursus = async (req, res) => {
   }
 };
 
-// Confirmer achat cursus
+// Confirmation of the purchase cursus 
 exports.confirmCursusPurchase = async (req, res) => {
   const userId = req.session.user?._id;
   const { cursusId } = req.params;

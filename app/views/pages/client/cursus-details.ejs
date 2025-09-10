@@ -1,4 +1,13 @@
-<!-- ✅ Navbar -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Détails des cursus</title>
+  <link rel="stylesheet" href="/css/client.css">
+</head>
+<body>
+
+<!-- Navbar -->
   <nav>
     <ul>
       <li><a href="/">Accueil</a></li>
@@ -14,14 +23,12 @@
           <li><a href="/admin/dashboard">Dashboard</a></li>
         <% } %>
 
-        <li>
-          <form method="POST" action="/auth/logout" style="display:inline;">
-            <button>Déconnexion</button>
-          </form>
-        </li>
       <% } %>
     </ul>
-  </nav><h1><%= cursus.title %></h1>
+  </nav>
+  
+ <!-- Cursus title --> 
+<h1><%= cursus.title %></h1>
 <p>Thème : <%= cursus.theme.title %></p>
 <p>Prix du cursus complet : <%= cursus.price %> €</p>
 
@@ -33,8 +40,9 @@
 <% } else { %>
   <p>✅ Cursus acheté</p>
 <% } %>
-
 <hr>
+
+<!-- Lessons --> 
 <h2>Leçons :</h2>
 <ul>
   <% lessons.forEach(lesson => { %>
@@ -58,3 +66,6 @@
 
 
 <a href="/client/themes">← Retour aux thèmes</a>
+
+</body>
+</html>

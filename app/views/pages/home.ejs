@@ -4,42 +4,35 @@
   <meta charset="UTF-8">
   <title>Accueil - Knowledge Learning</title>
   <link rel="stylesheet" href="/css/styles.css">
-
-
-
 </head>
 <body>
 
-  <!-- ✅ Navbar -->
-  <nav>
+  <!-- Navbar -->
+  <nav class="navbar">
     <ul>
       <li><a href="/">Accueil</a></li>
-
       <% if (!session.user) { %>
         <li><a href="/auth/register">S'inscrire</a></li>
         <li><a href="/auth/login">Se connecter</a></li>
       <% } else { %>
         <li><a href="/client/themes">Thèmes</a></li>
         <li><a href="/client/certifications">Mes certifications</a></li>
-
         <% if (session.user.role === 'admin') { %>
           <li><a href="/admin/dashboard">Dashboard</a></li>
         <% } %>
-
         <li>
           <form method="POST" action="/auth/logout" style="display:inline;">
-            <button>Déconnexion</button>
+            <button class="logout-btn">Déconnexion</button>
           </form>
         </li>
       <% } %>
     </ul>
   </nav>
 
-  <!-- ✅ Contenu principal -->
-  <main>
-     <main>
+  <!-- home -->
+  <main class="container">
     <section class="hero">
-      <h1>Bienvenue sur Knowledge Learning !</h1>
+      <h1>Bienvenue sur <span class="highlight">Knowledge Learning</span> !</h1>
       <p>La plateforme d'apprentissage moderne et intuitive.</p>
       <a href="/auth/register" class="btn">Commencer</a>
     </section>
@@ -56,8 +49,8 @@
     </section>
   </main>
 
-  <footer>
-    &copy; 2025 Knowledge Learning - Tous droits réservés
+  <footer class="footer">
+    &copy; 2025 Knowledge Learning – Tous droits réservés
   </footer>
 
 </body>

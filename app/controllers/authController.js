@@ -4,7 +4,7 @@ const transporter = require('../config/mailer');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-// ✅ Fonction d'inscription
+// inscription
 const registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -38,7 +38,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// ✅ Fonction d’activation
+// activation
 const activateAccount = async (req, res) => {
   const token = req.params.token;
 
@@ -57,7 +57,7 @@ const activateAccount = async (req, res) => {
   }
 };
 
-// ✅ Fonction de connexion
+// connexion
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -69,7 +69,7 @@ const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).send('Mot de passe incorrect.');
 
-    // 🔐 Enregistrement de l'utilisateur en session
+    // registering users
     req.session.user = {
       _id: user._id,
       name: user.name,
@@ -77,11 +77,14 @@ const loginUser = async (req, res) => {
       role: user.role
     };
 
-    res.send(`Bienvenue ${user.name} ! 🎉`);
+    // redirect
+    res.redirect('/');
   } catch (err) {
     console.error('💥 ERREUR DANS loginUser :', err);
     res.status(500).send('Erreur serveur');
   }
 };
+
+
 
 module.exports = { registerUser, activateAccount, loginUser };

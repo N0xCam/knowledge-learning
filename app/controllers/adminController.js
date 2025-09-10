@@ -1,4 +1,3 @@
-// ✅ adminController.js avec gestion AJAX complète (ajout, modification, suppression)
 const User = require('../models/User');
 const Theme = require('../models/Theme');
 const Cursus = require('../models/Cursus');
@@ -27,7 +26,7 @@ exports.adminDashboard = async (req, res) => {
   }
 };
 
-// 🔹 Voir les utilisateurs
+// See users
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find().lean();
@@ -38,7 +37,7 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// 🔹 CRÉER UN UTILISATEUR
+// create user
 exports.createUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -52,7 +51,7 @@ exports.createUser = async (req, res) => {
 };
 
 
-// 🔹 Modifier un utilisateur
+// update user
 exports.updateUser = async (req, res) => {
   try {
     const { name, email, role, isActive } = req.body;
@@ -68,7 +67,7 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// 🔹 Supprimer un utilisateur
+// delete user
 exports.deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.userId);
@@ -79,7 +78,7 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// 🔹 THEMES
+// see theme
 exports.createTheme = async (req, res) => {
   try {
     await Theme.create({ title: req.body.title });
@@ -90,7 +89,7 @@ exports.createTheme = async (req, res) => {
   }
 };
 
-
+// update theme
 exports.updateTheme = async (req, res) => {
   try {
     const updatedTheme = await Theme.findByIdAndUpdate(
@@ -105,6 +104,7 @@ exports.updateTheme = async (req, res) => {
   }
 };
 
+// delete theme
 exports.deleteTheme = async (req, res) => {
   try {
     await Theme.findByIdAndDelete(req.params.themeId);
@@ -115,7 +115,7 @@ exports.deleteTheme = async (req, res) => {
   }
 };
 
-// 🔹 CURSUS
+// Create cursus
 exports.createCursus = async (req, res) => {
   try {
     const { title, price, theme } = req.body;
@@ -129,7 +129,7 @@ exports.createCursus = async (req, res) => {
   }
 };
 
-
+// Update cursus
 exports.updateCursus = async (req, res) => {
   try {
     const { title, price } = req.body;
@@ -145,6 +145,7 @@ exports.updateCursus = async (req, res) => {
   }
 };
 
+// Delete cursus
 exports.deleteCursus = async (req, res) => {
   try {
     await Cursus.findByIdAndDelete(req.params.cursusId);
@@ -156,7 +157,7 @@ exports.deleteCursus = async (req, res) => {
 };
 
 
-// 🔹 LEÇONS
+// Create Lesson
 exports.createLesson = async (req, res) => {
   try {
     const { title, price, cursus } = req.body;
@@ -170,7 +171,7 @@ exports.createLesson = async (req, res) => {
   }
 };
 
-
+// Update Lesson
 exports.updateLesson = async (req, res) => {
   try {
     const { title, price } = req.body;
@@ -186,6 +187,7 @@ exports.updateLesson = async (req, res) => {
   }
 };
 
+// Delete Lesson
 exports.deleteLesson = async (req, res) => {
   try {
     await Lesson.findByIdAndDelete(req.params.lessonId);

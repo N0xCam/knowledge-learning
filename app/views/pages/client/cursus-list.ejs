@@ -3,9 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <title>Liste des cursus</title>
+  <link rel="stylesheet" href="/css/client.css">
 </head>
 <body>
-  <!-- ✅ Navbar -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Liste des cursus</title>
+</head>
+<body>
+  <!-- Navbar -->
   <nav>
     <ul>
       <li><a href="/">Accueil</a></li>
@@ -21,14 +30,11 @@
           <li><a href="/admin/dashboard">Dashboard</a></li>
         <% } %>
 
-        <li>
-          <form method="POST" action="/auth/logout" style="display:inline;">
-            <button>Déconnexion</button>
-          </form>
-        </li>
       <% } %>
     </ul>
   </nav>
+
+  <!-- list of cursus -->
   <h1>Liste des cursus</h1>
   <% if (cursusList.length === 0) { %>
     <p>Aucun cursus disponible.</p>
@@ -44,5 +50,8 @@
       <% }) %>
     </ul>
   <% } %>
+</body>
+</html>
+
 </body>
 </html>

@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <meta charset="UTF-8">
+  <title>Liste des leçons</title>
+  <link rel="stylesheet" href="/css/client.css">
+</head>
+<body>
 
   <meta charset="UTF-8">
   <title><%= lesson.title %></title>
@@ -27,7 +32,7 @@
   </style>
 </head>
 <body>
-<!-- ✅ Navbar -->
+<!-- Navbar -->
   <nav>
     <ul>
       <li><a href="/">Accueil</a></li>
@@ -43,11 +48,6 @@
           <li><a href="/admin/dashboard">Dashboard</a></li>
         <% } %>
 
-        <li>
-          <form method="POST" action="/auth/logout" style="display:inline;">
-            <button>Déconnexion</button>
-          </form>
-        </li>
       <% } %>
     </ul>
   </nav>
@@ -57,6 +57,7 @@
 
   <h1><%= lesson.title %></h1>
 
+ <!-- Lesson --> 
   <section>
     <h2>Fiche de cours</h2>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>

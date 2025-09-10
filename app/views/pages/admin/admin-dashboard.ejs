@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body>
-  <!-- ✅ Navbar -->
+  <!-- Navbar -->
   <nav>
     <ul>
       <li><a href="/">Accueil</a></li>
@@ -33,7 +33,7 @@
   
   <h1>Tableau de bord administrateur</h1>
 
-<!-- 🔹 UTILISATEURS -->
+<!-- USERS -->
 <section>
   <h2>Utilisateurs</h2>
 
@@ -93,7 +93,7 @@
 
 
 
-  <!-- 🔹 THÈMES -->
+  <!-- THEMES -->
   <section>
     <h2>Thèmes</h2>
     <form action="/admin/themes/create" method="POST">
@@ -114,10 +114,7 @@
           <input type="text" value="<%= theme.title %>" id="input-theme-<%= theme._id %>">
         </td>
         <td>
-          <!-- Bouton modifier -->
           <button type="button" onclick="modifierTheme('<%= theme._id %>')">✏️</button>
-
-          <!-- Formulaire de suppression -->
           <form action="/admin/themes/<%= theme._id %>/delete" method="POST" style="display:inline;">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button type="submit">🗑</button>
@@ -129,7 +126,7 @@
 </table>
 
 
-  <!-- 🔹 CURSUS -->
+  <!-- CURSUS -->
   <section>
     <h2>Cursus</h2>
     <form action="/admin/cursus/create" method="POST">
@@ -153,10 +150,7 @@
             <td><input type="number" value="<%= c.price %>" id="input-cursus-price-<%= c._id %>"></td>
             <td><%= c.theme?.title || '⛔' %></td>
             <td>
-  <!-- Bouton modifier -->
   <button type="button" onclick="modifierCursus('<%= c._id %>')">✏️</button>
-
-  <!-- Formulaire de suppression -->
   <form action="/admin/cursus/<%= c._id %>/delete" method="POST" style="display:inline;">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <button type="submit">🗑</button>
@@ -169,7 +163,7 @@
     </table>
   </section>
 
-  <!-- 🔹 LEÇONS -->
+  <!-- LESSONS -->
   <section>
     <h2>Leçons</h2>
     <form action="/admin/lessons/create" method="POST">
@@ -193,10 +187,7 @@
             <td><input type="number" value="<%= l.price %>" id="input-lesson-price-<%= l._id %>"></td>
             <td><%= l.cursus?.title || '⛔' %></td>
            <td>
-  <!-- Bouton modifier -->
   <button type="button" onclick="modifierLesson('<%= l._id %>')">✏️</button>
-
-  <!-- Formulaire de suppression -->
   <form action="/admin/lessons/<%= l._id %>/delete" method="POST" style="display:inline;">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <button type="submit">🗑</button>
@@ -209,7 +200,7 @@
     </table>
   </section>
 
-  <!-- ✅ SCRIPT INLINE -->
+  <!-- SCRIPT INLINE -->
   <script>
     const csrf = '<%= csrfToken %>';
 
