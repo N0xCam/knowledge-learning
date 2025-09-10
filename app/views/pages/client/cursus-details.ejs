@@ -2,28 +2,70 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title><%= cursus.title %></title>
+  <title>Détails des cursus</title>
+  <link rel="stylesheet" href="/css/client.css">
 </head>
 <body>
-  <h1><%= cursus.title %></h1>
-  <p>Thème : <%= cursus.theme.title %></p>
-  <p>Prix : <%= cursus.price %> €</p>
 
-  <h2>Leçons incluses :</h2>
-  <% if (lessons.length === 0) { %>
-    <p>Aucune leçon disponible.</p>
-  <% } else { %>
+<!-- Navbar -->
+  <nav>
     <ul>
-      <% lessons.forEach(lesson => { %>
-        <li>
-          <a href="/client/lessons/<%= lesson._id %>">
-            <strong><%= lesson.title %></strong>
-          </a> – <%= lesson.price %> €
-        </li>
-      <% }) %>
-    </ul>
-  <% } %>
+      <li><a href="/">Accueil</a></li>
 
-  <p><a href="/client/themes/<%= cursus.theme._id %>/cursus">← Retour aux cursus</a></p>
+      <% if (!session.user) { %>
+        <li><a href="/auth/register">S'inscrire</a></li>
+        <li><a href="/auth/login">Se connecter</a></li>
+      <% } else { %>
+        <li><a href="/client/themes">Thèmes</a></li>
+        <li><a href="/client/certifications">Mes certifications</a></li>
+
+        <% if (session.user.role === 'admin') { %>
+          <li><a href="/admin/dashboard">Dashboard</a></li>
+        <% } %>
+
+      <% } %>
+    </ul>
+  </nav>
+  
+ <!-- Cursus title --> 
+<h1><%= cursus.title %></h1>
+<p>Thème : <%= cursus.theme.title %></p>
+<p>Prix du cursus complet : <%= cursus.price %> €</p>
+
+<% if (!hasPurchasedCursus) { %>
+  <form action="/purchase/cursus/<%= cursus._id %>" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button type="submit">Acheter le cursus 💳</button>
+  </form>
+<% } else { %>
+  <p>✅ Cursus acheté</p>
+<% } %>
+<hr>
+
+<!-- Lessons --> 
+<h2>Leçons :</h2>
+<ul>
+  <% lessons.forEach(lesson => { %>
+    <li>
+      <%= lesson.title %> — <%= lesson.price %> €
+      <% if (validatedLessonIds.includes(lesson._id.toString())) { %>
+        ✅
+      <% } %>
+      <% if (lessonAccess[lesson._id]) { %>
+        — <a href="/client/lessons/<%= lesson._id %>">Voir la leçon</a>
+      <% } else { %>
+        <form action="/purchase/lessons/<%= lesson._id %>" method="POST" style="display:inline;">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit">Acheter</button>
+        </form>
+      <% } %>
+    </li>
+  <% }) %>
+</ul>
+
+
+
+<a href="/client/themes">← Retour aux thèmes</a>
+
 </body>
 </html>

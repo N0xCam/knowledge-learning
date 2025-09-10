@@ -2,9 +2,32 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Liste des Thèmes</title>
+  <title>AListe des thèmes</title>
+  <link rel="stylesheet" href="/css/client.css">
 </head>
 <body>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <ul>
+      <li><a href="/">Accueil</a></li>
+
+      <% if (!session.user) { %>
+        <li><a href="/auth/register">S'inscrire</a></li>
+        <li><a href="/auth/login">Se connecter</a></li>
+      <% } else { %>
+        <li><a href="/client/themes">Thèmes</a></li>
+        <li><a href="/client/certifications">Mes certifications</a></li>
+
+        <% if (session.user.role === 'admin') { %>
+          <li><a href="/admin/dashboard">Dashboard</a></li>
+        <% } %>
+
+      <% } %>
+    </ul>
+  </nav>
+  
+  <!-- List of themes -->
   <h1>Liste des Thèmes</h1>
 
   <ul>

@@ -1,8 +1,10 @@
 const User = require('../models/User');
 const crypto = require('crypto');
 const transporter = require('../config/mailer');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
-// ✅ Fonction d'inscription
+// inscription
 const registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -36,7 +38,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// ✅ Fonction d’activation
+// activation
 const activateAccount = async (req, res) => {
   const token = req.params.token;
 
@@ -55,7 +57,7 @@ const activateAccount = async (req, res) => {
   }
 };
 
-// ✅ Fonction de connexion
+// connexion
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -63,14 +65,26 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).send('Utilisateur non trouvé.');
     if (!user.isActive) return res.status(403).send('Compte non activé.');
-    if (user.password !== password) return res.status(401).send('Mot de passe incorrect.');
 
-    res.send(`Bienvenue ${user.name} ! 🎉`);
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).send('Mot de passe incorrect.');
+
+    // registering users
+    req.session.user = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    };
+
+    // redirect
+    res.redirect('/');
   } catch (err) {
     console.error('💥 ERREUR DANS loginUser :', err);
     res.status(500).send('Erreur serveur');
   }
 };
 
-// ✅ Export des fonctions
+
+
 module.exports = { registerUser, activateAccount, loginUser };

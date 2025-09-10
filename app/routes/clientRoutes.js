@@ -2,30 +2,23 @@ const express = require('express');
 const router = express.Router();
 const {
   showAllThemes,
-  showAllCursus,
+  showCursusByTheme,
   showCursusDetails,
   validateLesson,
   showLesson,
-  showCursusByTheme,
   showCertifications 
 } = require('../controllers/clientController');
-
-
-
-console.log('📦 clientRoutes.js chargé');
+const { isAuthenticated } = require('../middlewares/authMiddleware');
 
 router.get('/test', (req, res) => {
-  res.send('✅ Route client test OK');
 });
 
-
-// Routes client
-router.get('/themes', showAllThemes); // 🟢 Liste des thèmes
-router.get('/themes/:themeId/cursus', showCursusByTheme); // 🟢 Liste des cursus d'un thème
-router.get('/cursus/:cursusId', showCursusDetails); // 🟢 Détails du cursus (avec leçons)
+router.get('/themes', showAllThemes);
+router.get('/themes/:themeId/cursus', showCursusByTheme); 
+router.get('/cursus/:cursusId', showCursusDetails); 
 router.get('/lessons/:lessonId', showLesson);
-router.post('/lessons/:lessonId/validate', validateLesson); // 🟢 Validation d'une leçon
-router.get('/certifications', showCertifications);
+router.post('/lessons/:lessonId/validate', validateLesson); 
+router.get('/certifications', isAuthenticated, showCertifications);
 
 
 module.exports = router;

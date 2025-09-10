@@ -1,4 +1,3 @@
-// importData.js
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -11,12 +10,11 @@ const run = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('MongoDB connecté');
 
-    // Nettoyage
     await Theme.deleteMany();
     await Cursus.deleteMany();
     await Lesson.deleteMany();
 
-    // Thèmes
+    // Themes
     const themes = await Theme.insertMany([
       { title: 'Musique' },
       { title: 'Informatique' },
@@ -24,7 +22,7 @@ const run = async () => {
       { title: 'Cuisine' }
     ]);
 
-    // Récupérer les IDs des thèmes
+    // IDS
     const [musique, info, jardin, cuisine] = themes;
 
     // Cursus
@@ -61,23 +59,23 @@ const run = async () => {
       }
     ]);
 
-    // Leçons
+    // Lessons
     const lessons = [
-      // Musique
+      // Music
       { title: 'Découverte de l’instrument', price: 26, cursus: cursus[0]._id },
       { title: 'Les accords et les gammes', price: 26, cursus: cursus[0]._id },
       { title: 'Découverte de l’instrument', price: 26, cursus: cursus[1]._id },
       { title: 'Les accords et les gammes', price: 26, cursus: cursus[1]._id },
 
-      // Informatique
+      // Computing
       { title: 'Les langages Html et CSS', price: 32, cursus: cursus[2]._id },
       { title: 'Dynamiser votre site avec Javascript', price: 32, cursus: cursus[2]._id },
 
-      // Jardinage
+      // Gardening
       { title: 'Les outils du jardinier', price: 16, cursus: cursus[3]._id },
       { title: 'Jardiner avec la lune', price: 16, cursus: cursus[3]._id },
 
-      // Cuisine
+      // Cooking
       { title: 'Les modes de cuisson', price: 23, cursus: cursus[4]._id },
       { title: 'Les saveurs', price: 23, cursus: cursus[4]._id },
       { title: 'Mettre en œuvre le style dans l’assiette', price: 26, cursus: cursus[5]._id },
@@ -86,7 +84,6 @@ const run = async () => {
 
     await Lesson.insertMany(lessons);
 
-    console.log('✅ Données importées avec succès !');
     process.exit();
   } catch (err) {
     console.error('❌ Erreur lors de l’import :', err);

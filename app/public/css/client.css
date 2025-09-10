@@ -1,0 +1,176 @@
+/* Colors */
+:root {
+  --clr-bg: #f1f8fc;
+  --clr-primary: #0074c7;
+  --clr-secondary: #00497c;
+  --clr-dark: #384050;
+  --clr-accent-red: #cd2c2e;
+  --clr-accent-green: #82b864;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--clr-bg);
+  color: var(--clr-dark);
+  line-height: 1.6;
+  padding: 20px;
+  text-align: center;
+}
+
+h1, h2 {
+  color: var(--clr-secondary);
+  margin-bottom: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px auto;
+  max-width: 700px;
+}
+
+li {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+a {
+  text-decoration: none;
+  color: var(--clr-primary);
+  font-weight: bold;
+}
+
+a:hover {
+  color: var(--clr-secondary);
+}
+
+button {
+  background-color: var(--clr-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: var(--clr-secondary);
+}
+
+form {
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+input, select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+nav {
+  background-color: #0074c7;
+  padding: 1rem 2rem;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav form button {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Flash messages */
+.flash-message {
+  background-color: #D1FAE5;
+  color: #065F46;
+  border: 1px solid #10B981;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 0 auto 20px;
+  max-width: 500px;
+  animation: fadein 0.5s ease-in-out, fadeout 0.5s ease-in-out 2.5s forwards;
+}
+
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeout {
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* validate */
+.validated {
+  color: var(--clr-accent-green);
+  font-weight: bold;
+}
+
+/* Fallback links */
+p a {
+  display: inline-block;
+  margin-top: 20px;
+  color: var(--clr-dark);
+  text-decoration: underline;
+}
+
+/* video*/
+video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 20px 0;
+}
+
+/* Section structuration */
+section {
+  margin: 40px auto;
+  max-width: 700px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.price {
+  color: var(--clr-accent-green);
+  font-weight: bold;
+}
+
+.error {
+  color: var(--clr-accent-red);
+  font-weight: bold;
+}
