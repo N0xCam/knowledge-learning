@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "test": "set NODE_ENV=test&& mocha --require test/setup.js test/**/*.test.js"
+    "test": "mocha --require test/setup.js test/**/*.test.js"
   },
   "keywords": [],
   "author": "",

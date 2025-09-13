@@ -2,18 +2,20 @@
 const chai = require('chai');
 let chaiHttp = require('chai-http');
 
-// Certaines versions exportent le plugin sous default
+// Some versions of chai-http export the plugin under `default`
 chaiHttp = chaiHttp.default || chaiHttp;
 
+// Enable chai-http plugin
 chai.use(chaiHttp);
 
 const app = require('../server');
 
-// Globals
+// Make globals available to all tests
 global.expect = chai.expect;
 global.chai = chai;
 
-// ⚠️ Ici on ne met pas chai.request direct (ça casse dans certaines versions)
+// Important: wrap chai.request so it works across versions
 global.request = (server) => chai.request(server);
 
+// Expose the app for tests
 global.app = app;

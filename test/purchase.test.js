@@ -4,47 +4,53 @@ const Cursus = require('../app/models/Cursus');
 const Purchase = require('../app/models/Purchase');
 const bcrypt = require('bcrypt');
 
-describe('💳 Achats', () => {
+describe('Purchase', () => {
   let user, cursus;
 
+  // Connect to the test database
   before(async () => {
     await mongoose.connect(process.env.MONGO_URI);
   });
 
+  // Disconnect after all tests
   after(async () => {
     await mongoose.connection.close();
   });
 
+  // Reset collections and prepare test data before each test
   beforeEach(async () => {
     await User.deleteMany({});
     await Cursus.deleteMany({});
     await Purchase.deleteMany({});
 
+    // Create a test user with a hashed password
     const passwordHash = await bcrypt.hash('123456', 10);
     user = await User.create({
-      name: 'Client Test',
+      name: 'Test Client',
       email: 'client@test.com',
       password: passwordHash,
       isActive: true
     });
 
+    // Create a test cursus
     cursus = await Cursus.create({
-      title: 'Cursus Test',
+      title: 'Test Cursus',
       price: 100
     });
   });
 
-it('✅ Doit acheter un cursus', async () => {
-  const res = await request(app)   // <= request(app), pas juste request
-    .post(`/purchase/cursus/${cursus._id}`)
-    .send({ userId: user._id });
+  it('Should allow a user to purchase a cursus', async () => {
+    // Send a purchase request
+    const res = await request(app)
+      .post(`/purchase/cursus/${cursus._id}`)
+      .send({ userId: user._id });
 
-  expect(res).to.have.status(200);
-  expect(res.text).to.include('Achat réussi');
+    // Check the HTTP response
+    expect(res).to.have.status(200);
+    expect(res.text).to.include('Achat réussi');
 
-  const purchase = await Purchase.findOne({ user: user._id, cursus: cursus._id });
-  expect(purchase).to.not.be.null;
-});
-
-
+    // Ensure the purchase is stored in the database
+    const purchase = await Purchase.findOne({ user: user._id, cursus: cursus._id });
+    expect(purchase).to.not.be.null;
+  });
 });
