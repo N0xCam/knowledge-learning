@@ -1,3 +1,12 @@
+/**
+ * Lesson schema definition.
+ * @typedef {Object} LessonDoc
+ * @property {string} title - Lesson title
+ * @property {number} price - Lesson price
+ * @property {ObjectId} cursus - Parent cursus id
+ */
+
+
 const mongoose = require('mongoose');
 
 const lessonSchema = new mongoose.Schema({

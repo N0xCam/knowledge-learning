@@ -1,3 +1,15 @@
+/**
+ * User schema definition.
+ * @typedef {Object} UserDoc
+ * @property {string} name - User's name
+ * @property {string} email - User's email (unique)
+ * @property {string} password - Hashed password
+ * @property {string} role - User role ("admin", "client")
+ * @property {boolean} isActive - Whether the account is active
+ */
+
+
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
@@ -14,7 +26,6 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Hash du mot de passe avant enregistrement
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 10);
