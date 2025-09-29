@@ -1,16 +1,16 @@
 1. Présentation du projet Knowledge Learning
 
 Knowledge Learning est une plateforme e-learning moderne permettant aux utilisateurs de :
-Créer un compte et activer leur profil par mail
-Acheter des cursus et des leçons en ligne
-Suivre et valider leurs apprentissages
-Accéder à leurs certifications
+- Créer un compte et activer leur profil par mail
+- Acheter des cursus et des leçons en ligne
+- Suivre et valider leurs apprentissages
+- Accéder à leurs certifications
 
 Le projet a été réalisé dans le cadre du Titre Professionnel Développeur Web et Web Mobile.
 
 2. Fonctionnalités principales
 
-Authentification sécurisée (inscription, activation par mail, connexion, déconnexion)
+Authentification sécurisée (inscription, activation par mail, connexion)
 Gestion des rôles : admin, client, autre
 E-commerce intégré : achat de cursus et leçons
 Base de données MongoDB structurée autour des thèmes, cursus et leçons
@@ -79,12 +79,14 @@ Sécurité et validation des modèles (User, Cursus, Lesson)
 9. Documentation
 
 La documentation du code est générée avec JSDoc.
+
 Générer la doc :
 npm run docs
 
 La doc se trouve ensuite dans /docs.
 
 10. Structure du projet
+
 knowledge-learning/
 │── app/
 │   ├── controllers/
@@ -98,3 +100,4 @@ knowledge-learning/
 │── README.md
 
 Note : Les secrets (Mailtrap, Stripe, etc.) sont indiqués en clair car ce projet est un exercice d’étude. En conditions réelles, ils seraient stockés dans des variables d’environnement sécurisées et jamais publiés.
+
