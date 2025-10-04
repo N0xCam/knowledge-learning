@@ -1,15 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Liste des leçons</title>
-  <link rel="stylesheet" href="/css/client.css">
-  <link rel="icon" type="image/png" href="/images/favicon.png">
-</head>
-<body>
-
-  <meta charset="UTF-8">
-  <title><%= lesson.title %></title>
+  <meta charset="UTF-8" />
+  <title><%= lesson.title %> – Leçon</title>
+  <link rel="stylesheet" href="/css/client.css" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
   <style>
     .flash-message {
       background-color: #D1FAE5;
@@ -21,65 +16,145 @@
       margin-bottom: 20px;
       animation: fadein 0.5s ease-in-out, fadeout 0.5s ease-in-out 2.5s forwards;
     }
+    @keyframes fadein { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeout { to { opacity: 0; transform: translateY(-10px); } }
 
-    @keyframes fadein {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* vidéo centrée */
+    .video { max-width: 960px; margin: 24px auto; }
+    .video h2 { text-align: center; }
+    .video iframe, .video video { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; }
+
+    /* zone des actions centrée */
+    .actions {
+      max-width: 960px;
+      margin: 24px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
     }
-
-    @keyframes fadeout {
-      to { opacity: 0; transform: translateY(-10px); }
+    .actions form { margin: 0; }
+    .actions button.validated {
+      opacity: 0.7;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
-<!-- Navbar -->
+
+  <!-- Navbar -->
   <nav>
     <ul>
       <li><a href="/">Accueil</a></li>
-
       <% if (!session.user) { %>
         <li><a href="/auth/register">S'inscrire</a></li>
         <li><a href="/auth/login">Se connecter</a></li>
       <% } else { %>
         <li><a href="/client/themes">Thèmes</a></li>
         <li><a href="/client/certifications">Mes certifications</a></li>
-
         <% if (session.user.role === 'admin') { %>
           <li><a href="/admin/dashboard">Dashboard</a></li>
         <% } %>
-
       <% } %>
     </ul>
   </nav>
+
   <% if (success_msg) { %>
     <div class="flash-message"><%= success_msg %></div>
   <% } %>
 
-  <h1><%= lesson.title %></h1>
+  <h1 style="text-align:center;"><%= lesson.title %></h1>
 
- <!-- Lesson --> 
-  <section>
-    <h2>Fiche de cours</h2>
+  <!-- Fiche -->
+  <section style="max-width: 720px; margin: 0 auto 24px;">
+    <h2 style="text-align:center;">Fiche de cours</h2>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
   </section>
 
-  <% if (lesson.videoUrl) { %>
-    <section>
-      <h2>Vidéo de la leçon</h2>
-      <video width="600" controls>
-        <source src="<%= lesson.videoUrl %>" type="video/mp4">
+  <!-- Vidéo -->
+  <section class="video">
+    <h2>Vidéo de la leçon</h2>
+    <%
+      // Use DB value if present, otherwise fallback to your YouTube link
+      const rawUrl = (lesson.videoUrl && lesson.videoUrl.trim())
+        ? lesson.videoUrl
+        : 'https://youtu.be/NSUQO5PX0EE';
+
+      function toYouTubeEmbed(u) {
+        if (!u) return null;
+        const s = String(u);
+        const mShort = s.match(/youtu\.be\/([A-Za-z0-9_-]{11})/);
+        const mLong  = s.match(/[?&]v=([A-Za-z0-9_-]{11})/);
+        const id = (mShort && mShort[1]) || (mLong && mLong[1]);
+        return id ? `https://www.youtube.com/embed/${id}` : null;
+      }
+
+      const yt = toYouTubeEmbed(rawUrl);
+    %>
+
+    <% if (yt) { %>
+      <iframe
+        src="<%= yt %>"
+        title="Vidéo YouTube"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+    <% } else { %>
+      <video controls preload="metadata" playsinline>
+        <source src="<%= rawUrl %>" type="video/mp4" />
         Votre navigateur ne supporte pas la lecture vidéo.
       </video>
-    </section>
-  <% } %>
+    <% } %>
+  </section>
 
-  <form action="/client/lessons/<%= lesson._id %>/validate" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <button type="submit">✅ Valider la leçon</button>
-  </form>
+  <% 
+    // initial state (if server provides `validated`, use it; else default false)
+    const isValidated = (typeof validated !== 'undefined') ? !!validated : false;
+  %>
+  <section class="actions">
+    <form id="validate-form" action="/client/lessons/<%= lesson._id %>/validate" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button
+        id="validate-btn"
+        type="submit"
+        data-validated="<%= isValidated %>"
+        <%= isValidated ? 'disabled' : '' %>
+        class="<%= isValidated ? 'validated' : '' %>">
+        <%= isValidated ? '✅ Leçon validée' : '✅ Valider la leçon' %>
+      </button>
+    </form>
 
-  <p><a href="javascript:history.back()">← Revenir en arrière</a></p>
+    <p><a href="javascript:history.back()">← Revenir en arrière</a></p>
+  </section>
 
+  <script>
+    // Optimistic UI: change button state immediately on submit
+    (function () {
+      var form = document.getElementById('validate-form');
+      var btn  = document.getElementById('validate-btn');
+      if (!form || !btn) return;
+
+      function setValidated(v) {
+        if (v) {
+          btn.textContent = '✅ Leçon validée';
+          btn.classList.add('validated');
+          btn.setAttribute('disabled', 'disabled');
+          btn.dataset.validated = 'true';
+        } else {
+          btn.textContent = '✅ Valider la leçon';
+          btn.classList.remove('validated');
+          btn.removeAttribute('disabled');
+          btn.dataset.validated = 'false';
+        }
+      }
+
+      // Ensure initial state matches data-validated
+      setValidated(btn.dataset.validated === 'true');
+
+      // On submit: instantly switch to "validated" to give feedback
+      form.addEventListener('submit', function () {
+        setValidated(true);
+      });
+    })();
+  </script>
 </body>
 </html>

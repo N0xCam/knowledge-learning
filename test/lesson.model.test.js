@@ -1,45 +1,58 @@
-const mongoose = require('mongoose');
+// test/lesson.model.test.js
 const { expect } = require('chai');
-const Lesson = require('../app/models/Lesson');
 const Cursus = require('../app/models/Cursus');
+const Lesson = require('../app/models/Lesson');
 
-describe('Lesson Model', () => {
+describe('Lesson Model', function () {
+  this.timeout(10000);
+
   let cursus;
 
-  // Connect to the test database and prepare data
-  before(async () => {
-    await mongoose.connect(process.env.MONGO_URI);
-    await Lesson.deleteMany({});
-    await Cursus.deleteMany({});
-    // Create a parent cursus for the lessons
-    cursus = await Cursus.create({ title: 'Parent Cursus', price: 200 });
-  });
-
-  // Disconnect after all tests are completed
-  after(async () => {
-    await mongoose.connection.close();
+  beforeEach(async () => {
+    // No mongoose.connect() here. Just clean collections you use.
+    await Promise.all([Lesson.deleteMany({}), Cursus.deleteMany({})]);
+    cursus = await Cursus.create({ title: 'JS Avancé', price: 49 });
   });
 
   it('Should create a lesson linked to a cursus', async () => {
-    // Create a lesson that references the parent cursus
-    const lesson = new Lesson({ title: 'Test Lesson', price: 50, cursus: cursus._id });
+    const lesson = await Lesson.create({
+      title: 'Introduction',
+      content: 'Contenu de test',
+      price: 9.99,
+      cursus: cursus._id
+    });
 
-    // Save it to the database
-    const saved = await lesson.save();
-
-    // Validate the saved data
-    expect(saved.title).to.equal('Test Lesson');
-    expect(saved.cursus.toString()).to.equal(cursus._id.toString());
+    expect(lesson._id).to.exist;
+    expect(String(lesson.cursus)).to.equal(String(cursus._id));
   });
 
   it('Should not save without a title', async () => {
     try {
-      // Try saving a lesson without a title
-      const lesson = new Lesson({ price: 20, cursus: cursus._id });
-      await lesson.save();
+      await Lesson.create({
+        content: 'Sans titre',
+        price: 9.99,
+        cursus: cursus._id
+      });
+      throw new Error('Expected validation error for missing title');
     } catch (err) {
-      // Ensure a validation error is raised for "title"
-      expect(err.errors.title).to.exist;
+      expect(err).to.exist;
+      expect(err.name).to.equal('ValidationError');
+      expect(err.errors).to.have.property('title');
+    }
+  });
+
+  it('Should not save without a price', async () => {
+    try {
+      await Lesson.create({
+        title: 'Sans prix',
+        content: 'Contenu',
+        cursus: cursus._id
+      });
+      throw new Error('Expected validation error for missing price');
+    } catch (err) {
+      expect(err).to.exist;
+      expect(err.name).to.equal('ValidationError');
+      expect(err.errors).to.have.property('price');
     }
   });
 });
