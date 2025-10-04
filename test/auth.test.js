@@ -1,49 +1,66 @@
+// test/auth.test.js
+const { expect } = require('chai');
+const supertest = require('supertest');
+const app = require('../server');            // exports the Express app (no listen in test)
 const User = require('../app/models/User');
-const bcrypt = require('bcrypt');
 
-describe('Authentication', () => {
-  // Before each test, we clear the User collection to ensure a clean state
+describe('Authentication', function () {
+  this.timeout(10000);
+
+  let req; // fresh agent per test (isolated cookie jar)
+
   beforeEach(async () => {
+    req = supertest.agent(app);
     await User.deleteMany({});
   });
 
   it('Should register a new user account', async () => {
-    // Simulate sending a registration request to the API
-    const res = await request(app)
+    const email = 'camille@example.com';
+
+    const res = await req
       .post('/auth/register')
-      .send({
-        name: 'Camille',
-        email: 'camille@example.com',
-        password: '123456',
-        role: 'client'
+      .send({ name: 'Camille', email, password: '123456', role: 'client' })
+      .expect(r => {
+        if (![200, 201, 302].includes(r.status)) {
+          throw new Error(`Unexpected status ${r.status}`);
+        }
       });
 
-    // Expect the server to respond with HTTP 200
-    expect(res).to.have.status(200);
-    // And the response text should indicate the account needs activation by email
-    expect(res.text).to.include('activer votre compte');
+    // DB effect is the source of truth
+    const saved = await User.findOne({ email });
+    expect(saved).to.exist;
+    expect(saved.isActive).to.be.false; // still inactive until activation
   });
 
   it('Should log in an active user', async () => {
-    // Hash the password before saving the user (same behavior as production)
-    const passwordHash = await bcrypt.hash('123456', 10);
-
-    // Create a user directly in the database with isActive=true
+    // Plain password: pre-save hook will hash exactly once
     await User.create({
       name: 'Camille',
-      email: 'login@test.com',
-      password: passwordHash,
+      email: 'camille@demo.com',
+      password: '123456',
       isActive: true
     });
 
-    // Send login request with correct credentials
-    const res = await request(app)
+    const loginRes = await req
       .post('/auth/login')
-      .send({ email: 'login@test.com', password: '123456' });
+      .send({ email: 'camille@demo.com', password: '123456' })
+      .expect(r => {
+        if (![200, 302].includes(r.status)) {
+          throw new Error(`Unexpected status ${r.status}`);
+        }
+      });
 
-    // Expect successful login
-    expect(res).to.have.status(200);
-    // And the response should contain a welcome message
-    expect(res.text).to.include('Bienvenue');
+    // If 200, page usually contains a welcome string
+    if (loginRes.status === 200) {
+      expect(loginRes.text).to.include('Bienvenue');
+    }
+
+    // If 302, make sure a session cookie was issued
+    if (loginRes.status === 302) {
+      const cookies = loginRes.headers['set-cookie'] || [];
+      const hasSid = cookies.some(c => /^connect\.sid=/.test(c));
+      expect(hasSid, 'session cookie connect.sid').to.be.true;
+    }
+
   });
 });

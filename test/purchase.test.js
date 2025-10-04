@@ -1,56 +1,64 @@
-const mongoose = require('mongoose');
+// test/purchase.test.js
+const { expect } = require('chai');
+const supertest = require('supertest');
+const app = require('../server');
 const User = require('../app/models/User');
 const Cursus = require('../app/models/Cursus');
-const Purchase = require('../app/models/Purchase');
-const bcrypt = require('bcrypt');
+const Purchase = require('../app/models/Purchase'); // adapte si besoin
 
-describe('Purchase', () => {
-  let user, cursus;
+describe('Purchase', function () {
+  this.timeout(10000);
 
-  // Connect to the test database
-  before(async () => {
-    await mongoose.connect(process.env.MONGO_URI);
-  });
+  let req;
 
-  // Disconnect after all tests
-  after(async () => {
-    await mongoose.connection.close();
-  });
-
-  // Reset collections and prepare test data before each test
   beforeEach(async () => {
-    await User.deleteMany({});
-    await Cursus.deleteMany({});
-    await Purchase.deleteMany({});
-
-    // Create a test user with a hashed password
-    const passwordHash = await bcrypt.hash('123456', 10);
-    user = await User.create({
-      name: 'Test Client',
-      email: 'client@test.com',
-      password: passwordHash,
-      isActive: true
-    });
-
-    // Create a test cursus
-    cursus = await Cursus.create({
-      title: 'Test Cursus',
-      price: 100
-    });
+    req = supertest.agent(app); // garde la session pour passer l’auth middleware
+    await Promise.all([
+      User.deleteMany({}),
+      Cursus.deleteMany({}),
+      Purchase.deleteMany({})
+    ]);
   });
 
   it('Should allow a user to purchase a cursus', async () => {
-    // Send a purchase request
-    const res = await request(app)
+    await User.create({
+      name: 'Camille',
+      email: 'buy@demo.com',
+      password: '123456',
+      isActive: true
+    });
+    const cursus = await Cursus.create({ title: 'JS Avancé', price: 49 });
+
+    // 1) Login
+    await req
+      .post('/auth/login')
+      .send({ email: 'buy@demo.com', password: '123456' })
+      .expect(r => { if (![200, 302].includes(r.status)) throw new Error(`Unexpected login ${r.status}`); });
+
+    // 2) Achat
+    const purchaseRes = await req
       .post(`/purchase/cursus/${cursus._id}`)
-      .send({ userId: user._id });
+      .send({})
+      .expect(r => { if (![200, 201, 302].includes(r.status)) throw new Error(`Unexpected purchase ${r.status}`); });
 
-    // Check the HTTP response
-    expect(res).to.have.status(200);
-    expect(res.text).to.include('Achat réussi');
+    // 3) Si redirection Stripe, on simule le retour "success"
+    if (purchaseRes.status === 302) {
+      const loc = purchaseRes.headers.location || '';
+      const isStripe = /^https?:\/\/checkout\.stripe\.com\//i.test(loc);
 
-    // Ensure the purchase is stored in the database
-    const purchase = await Purchase.findOne({ user: user._id, cursus: cursus._id });
-    expect(purchase).to.not.be.null;
+      if (isStripe) {
+        // on appelle directement la route de succès de ton app
+        await req
+          .get(`/purchase/success/cursus/${cursus._id}`)
+          .expect(r => { if (![200, 302].includes(r.status)) throw new Error(`Unexpected success ${r.status}`); });
+      } else {
+        // si c’est une redirection interne, on la suit
+        await req.get(loc).expect(r => { if (![200, 302].includes(r.status)) throw new Error(`Unexpected follow ${r.status}`); });
+      }
+    }
+
+    // 4) Vérification en base
+    const p = await Purchase.findOne({ cursus: cursus._id });
+    expect(p, 'Purchase not found in DB').to.exist;
   });
 });

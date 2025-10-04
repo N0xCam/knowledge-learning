@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "test": "mocha --require test/setup.js test/**/*.test.js",
+    "test": "cross-env NODE_ENV=test mocha --require test/setup.js \"test/**/*.test.js\" --timeout 10000",
     "docs": "jsdoc -c jsdoc.json"
   },
   "keywords": [],

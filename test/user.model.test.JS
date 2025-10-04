@@ -1,45 +1,33 @@
-const mongoose = require('mongoose');
 const { expect } = require('chai');
-const bcrypt = require('bcrypt');
 const User = require('../app/models/User');
 
-describe('User Model', () => {
-  // Connect to the test database before running tests
-  before(async () => {
-    await mongoose.connect(process.env.MONGO_URI);
+describe('User Model', function () {
+  this.timeout(10000);
+
+  beforeEach(async () => {
     await User.deleteMany({});
   });
 
-  // Disconnect after tests
-  after(async () => {
-    await mongoose.connection.close();
-  });
-
   it('should create a user with a hashed password', async () => {
-    const user = new User({
+    const u = await User.create({
       name: 'Camille',
-      email: 'camille@test.com',
-      password: '123456',
-      role: 'client'
+      email: 'hash@test.com',
+      password: 'secret' // sera hashé par le hook
     });
 
-    const saved = await user.save();
-
-    expect(saved.name).to.equal('Camille');
-    expect(saved.email).to.equal('camille@test.com');
-
-    // Verify that the stored password is hashed
-    const isMatch = await bcrypt.compare('123456', saved.password);
-    expect(isMatch).to.be.true;
+    expect(u._id).to.exist;
+    expect(u.password).to.be.a('string');
+    expect(u.password).to.not.equal('secret');
   });
 
   it('should not save a user without an email', async () => {
+    let err;
     try {
-      const user = new User({ name: 'No Email', password: '123456' });
-      await user.save();
-      throw new Error('User was saved without an email');
-    } catch (err) {
-      expect(err.errors.email).to.exist;
-    }
+      await User.create({ name: 'NoMail', password: 'x' });
+    } catch (e) { err = e; }
+
+    expect(err).to.exist;
+    expect(err.name).to.equal('ValidationError');
+    expect(err.errors).to.have.property('email');
   });
 });

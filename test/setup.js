@@ -1,21 +1,37 @@
 // test/setup.js
-const chai = require('chai');
-let chaiHttp = require('chai-http');
+const mongoose = require('mongoose');
+const supertest = require('supertest');
 
-// Some versions of chai-http export the plugin under `default`
-chaiHttp = chaiHttp.default || chaiHttp;
+// Load test env first (no .env here to avoid overriding test vars)
+require('dotenv').config({ path: '.env.test', override: true });
 
-// Enable chai-http plugin
-chai.use(chaiHttp);
-
+// Import the app (this triggers mongoose.connect in server.js)
 const app = require('../server');
 
-// Make globals available to all tests
-global.expect = chai.expect;
-global.chai = chai;
+// Wait until mongoose has actually connected before running tests
+async function waitForMongoose() {
+  if (mongoose.connection.readyState === 1) return; // already connected
+  await new Promise((resolve, reject) => {
+    const onOpen = () => { cleanup(); resolve(); };
+    const onErr = (err) => { cleanup(); reject(err); };
+    const cleanup = () => {
+      mongoose.connection.off('open', onOpen);
+      mongoose.connection.off('error', onErr);
+    };
+    mongoose.connection.once('open', onOpen);
+    mongoose.connection.once('error', onErr);
+  });
+}
 
-// Important: wrap chai.request so it works across versions
-global.request = (server) => chai.request(server);
-
-// Expose the app for tests
-global.app = app;
+// Mocha root hooks
+exports.mochaHooks = {
+  async beforeAll() {
+    await waitForMongoose();
+    global.request = supertest.agent(app); // keep cookies (sessions) across requests
+  },
+  async afterAll() {
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.connection.close();
+    }
+  }
+};
