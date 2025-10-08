@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Inscription réussie</title>
-  <meta http-equiv="refresh" content="3;url=/" />
+  <!-- Redirecto to /auth/login -->
+  <meta http-equiv="refresh" content="30;url=/auth/login" />
 </head>
 <body>
   <!--  Navbar -->
@@ -30,9 +31,12 @@
       <% } %>
     </ul>
   </nav>
-  <!--  Succes -->
+
+  <!--  Succès -->
   <h1>Bienvenue sur Knowledge Learning !</h1>
-  <p>Votre compte a bien été créé. Vous allez être redirigé·e vers l’accueil dans quelques secondes...</p>
-  <p><a href="/">Retour immédiat</a></p>
+  <p>Votre compte a bien été créé, vous allez recevoir un mail de confirmation pour valider votre inscription</p>
+  <p>Vous serez redirigé·e vers la page de connexion dans 30 secondes...</p>
+  
+  <p><a href="/auth/login">Connexion immédiate</a></p>
 </body>
 </html>
