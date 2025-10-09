@@ -63,6 +63,8 @@ MAIL_USER=e2631bebfee232
 MAIL_PASS=bcfa09e3c5d0a4 
 MAIL_FROM="Knowledge Learning <no-reply@knowledge.local>"  
 
+**Pour se connecter à l'adresse mailtrap : knowledgelearning.test@gmail.com / KLearning555!**
+
 💡 Ce compte Mailtrap a été créé uniquement pour la soutenance. En production, l’envoi d’emails serait réalisé via un service SMTP réel (ex. Gmail, SendGrid, Mailgun).
 
 **Intégration Stripe (paiement sécurisé)**
@@ -132,5 +134,6 @@ knowledge-learning/
 │── README.md
 
 Note : Les secrets (Mailtrap, Stripe, etc.) sont indiqués en clair car ce projet est un exercice d’étude. En conditions réelles, ils seraient stockés dans des variables d’environnement sécurisées et jamais publiés.
+
 
 
